@@ -475,9 +475,9 @@ void MainWindow::openDocuments()
 
 void MainWindow::openDocuments2()
 {
-    const auto resFileNames = Internal::OpenFileNames::get(this);
-    if (!resFileNames.listFilepath.isEmpty())
-        this->openDocumentsFromList(resFileNames.listFilepath);
+    newDocument();
+    importInCurrentDoc();
+    importInCurrentDoc();
 }
 
 void MainWindow::importInCurrentDoc()
