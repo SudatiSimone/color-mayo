@@ -39,8 +39,10 @@ protected:
 private:
     void newDocument();
     void openDocuments();
+    void openDocuments2();
     void importInCurrentDoc();
     void exportSelectedItems();
+    void saveSelectedItems();
     void quitApp();
     void toggleCurrentDocOriginTrihedron();
     void zoomInCurrentDoc();

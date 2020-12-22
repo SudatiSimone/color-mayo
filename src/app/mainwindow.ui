@@ -56,19 +56,6 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="label_AppIcon">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="pixmap">
-              <pixmap resource="../../mayo.qrc">:/images/appicon_128.png</pixmap>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignHCenter|Qt::AlignTop</set>
-             </property>
-            </widget>
-           </item>
-           <item>
             <spacer name="verticalSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -85,7 +72,27 @@
             </spacer>
            </item>
            <item>
-            <widget class="WidgetHomeFiles" name="widget_HomeFiles" native="true"/>
+            <widget class="WidgetHomeFiles" name="widget_HomeFiles" native="true">
+             <widget class="QLabel" name="label_AppIcon">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>-70</y>
+                <width>932</width>
+                <height>350</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="../../mayo.qrc">:/images/appicon_128.png</pixmap>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignHCenter|Qt::AlignTop</set>
+              </property>
+             </widget>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -575,6 +582,8 @@
     <addaction name="actionCloseAllExcept"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionOpen2"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -819,6 +828,16 @@
    </property>
    <property name="text">
     <string>Orthographic</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionOpen2">
+   <property name="text">
+    <string>Open2</string>
    </property>
   </action>
  </widget>

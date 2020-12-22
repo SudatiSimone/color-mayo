@@ -257,6 +257,12 @@ MainWindow::MainWindow(GuiApplication* guiApp, QWidget *parent)
     QObject::connect(
                 m_ui->menu_File, &QMenu::aboutToShow,
                 this, &MainWindow::createMenuRecentFiles);
+    QObject::connect(
+                m_ui->actionSave, &QAction::triggered,
+                this, &MainWindow::saveSelectedItems);
+    QObject::connect(
+                m_ui->actionOpen2, &QAction::triggered,
+                this, &MainWindow::openDocuments2);
     // "Display" actions
     {
         auto group = new QActionGroup(m_ui->menu_Projection);
@@ -467,6 +473,13 @@ void MainWindow::openDocuments()
         this->openDocumentsFromList(resFileNames.listFilepath);
 }
 
+void MainWindow::openDocuments2()
+{
+    const auto resFileNames = Internal::OpenFileNames::get(this);
+    if (!resFileNames.listFilepath.isEmpty())
+        this->openDocumentsFromList(resFileNames.listFilepath);
+}
+
 void MainWindow::importInCurrentDoc()
 {
     auto widgetGuiDoc = this->currentWidgetGuiDocument();
@@ -544,6 +557,47 @@ void MainWindow::exportSelectedItems()
     Internal::ImportExportSettings::save(lastSettings);
 }
 
+void MainWindow::saveSelectedItems()
+{
+    auto app = m_guiApp->application();
+
+    QStringList listWriterFileFilter;
+    for (const IO::Format& format : app->ioSystem()->writerFormats())
+        listWriterFileFilter.append(IO::System::fileFilter(format));
+
+    auto lastSettings = Internal::ImportExportSettings::load();
+    const QString filepath =
+            QFileDialog::getSaveFileName(
+                this,
+                tr("Select Output File"),
+                lastSettings.openDir,
+                listWriterFileFilter.join(QLatin1String(";;")),
+                &lastSettings.selectedFilter);
+    if (filepath.isEmpty())
+        return;
+
+    lastSettings.openDir = QFileInfo(filepath).canonicalPath();
+    auto taskMgr = TaskManager::globalInstance();
+    const IO::Format format = Internal::formatFromFilter(lastSettings.selectedFilter);
+    const TaskId taskId = taskMgr->newTask([=](TaskProgress* progress) {
+        QTime chrono;
+        chrono.start();
+        const bool okExport =
+                app->ioSystem()->exportApplicationItems()
+                .targetFile(filepath)
+                .targetFormat(format)
+                .withItems(m_guiApp->selectionModel()->selectedItems())
+                .withParameters(AppModule::get(app)->findWriterParameters(format))
+                .withMessenger(Messenger::defaultInstance())
+                .withTaskProgress(progress)
+                .execute();
+        if (okExport)
+            Messenger::defaultInstance()->emitInfo(tr("Export time: %1ms").arg(chrono.elapsed()));
+    });
+    taskMgr->setTitle(taskId, QFileInfo(filepath).fileName());
+    taskMgr->run(taskId);
+    Internal::ImportExportSettings::save(lastSettings);
+}
 void MainWindow::quitApp()
 {
     QApplication::quit();
