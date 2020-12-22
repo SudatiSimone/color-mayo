@@ -72,27 +72,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="WidgetHomeFiles" name="widget_HomeFiles" native="true">
-             <widget class="QLabel" name="label_AppIcon">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>-70</y>
-                <width>932</width>
-                <height>350</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="../../mayo.qrc">:/images/appicon_128.png</pixmap>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignHCenter|Qt::AlignTop</set>
-              </property>
-             </widget>
-            </widget>
+            <widget class="WidgetHomeFiles" name="widget_HomeFiles" native="true"/>
            </item>
           </layout>
          </widget>
@@ -868,8 +848,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../../mayo.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

@@ -4,3 +4,4 @@ build-*
 installer/setupvars.iss
 installer/Output
 exe_mayo_features_color
+file

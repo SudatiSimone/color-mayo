@@ -463,7 +463,7 @@ void MainWindow::newDocument()
 {
     static unsigned docSequenceId = 0;
     auto docPtr = m_guiApp->application()->newDocument(Document::Format::Binary);
-    docPtr->setName(tr("Anonymous%1").arg(++docSequenceId));
+    docPtr->setName(tr("Document%1").arg(++docSequenceId));
 }
 
 void MainWindow::openDocuments()
@@ -476,8 +476,75 @@ void MainWindow::openDocuments()
 void MainWindow::openDocuments2()
 {
     newDocument();
-    importInCurrentDoc();
-    importInCurrentDoc();
+
+    //---------------------------------------------------------
+
+    auto widgetGuiDoc = this->currentWidgetGuiDocument();
+    if (!widgetGuiDoc)
+        return;
+
+    const auto resFileNames = Internal::OpenFileNames::get(this);
+    if (resFileNames.listFilepath.isEmpty())
+        return;
+
+    auto app = m_guiApp->application();
+    auto taskMgr = TaskManager::globalInstance();
+    const TaskId taskId = taskMgr->newTask([=](TaskProgress* progress) {
+        QTime chrono;
+        chrono.start();
+        const bool okImport = app->ioSystem()->importInDocument()
+                .targetDocument(widgetGuiDoc->guiDocument()->document())
+                .withFilepaths(resFileNames.listFilepath)
+                .withParametersProvider(AppModule::get(app))
+                .withMessenger(Messenger::defaultInstance())
+                .withTaskProgress(progress)
+                .execute();
+        if (okImport)
+            Messenger::defaultInstance()->emitInfo(tr("Import time: %1ms").arg(chrono.elapsed()));
+    });
+    const QString taskTitle =
+            resFileNames.listFilepath.size() > 1 ?
+                tr("Import") :
+                QFileInfo(resFileNames.listFilepath.front()).fileName();
+    taskMgr->setTitle(taskId, taskTitle);
+    taskMgr->run(taskId);
+    for (const QString& filepath : resFileNames.listFilepath)
+        Internal::prependRecentFile(filepath);
+    //--------------------------------------------------------
+
+    auto widgetGuiDoc2 = this->currentWidgetGuiDocument();
+    if (!widgetGuiDoc2)
+        return;
+
+    auto resFileNames2 = resFileNames;
+    if (resFileNames2.listFilepath.isEmpty())
+        return;
+    //
+    resFileNames2.listFilepath.clear();
+    resFileNames2.listFilepath.append("C:/Users/susim/Desktop/color-mayo/file/OCCHIELLO.stl");
+    auto app2 = m_guiApp->application();
+    auto taskMgr2 = TaskManager::globalInstance();
+    const TaskId taskId2 = taskMgr2->newTask([=](TaskProgress* progress) {
+        QTime chrono;
+        chrono.start();
+        const bool okImport = app->ioSystem()->importInDocument()
+                .targetDocument(widgetGuiDoc2->guiDocument()->document())
+                .withFilepaths(resFileNames2.listFilepath)
+                .withParametersProvider(AppModule::get(app))
+                .withMessenger(Messenger::defaultInstance())
+                .withTaskProgress(progress)
+                .execute();
+        if (okImport)
+            Messenger::defaultInstance()->emitInfo(tr("Import time: %1ms").arg(chrono.elapsed()));
+    });
+    const QString taskTitle2 =
+            resFileNames2.listFilepath.size() > 1 ?
+                tr("Import") :
+                QFileInfo(resFileNames2.listFilepath.front()).fileName();
+    taskMgr->setTitle(taskId2, taskTitle2);
+    taskMgr->run(taskId2);
+    for (const QString& filepath2 : resFileNames2.listFilepath)
+        Internal::prependRecentFile(filepath2);
 }
 
 void MainWindow::importInCurrentDoc()
@@ -514,6 +581,7 @@ void MainWindow::importInCurrentDoc()
     for (const QString& filepath : resFileNames.listFilepath)
         Internal::prependRecentFile(filepath);
 }
+
 
 void MainWindow::exportSelectedItems()
 {
