@@ -634,6 +634,7 @@ void MainWindow::saveSelectedItems()
         listWriterFileFilter.append(IO::System::fileFilter(format));
 
     auto lastSettings = Internal::ImportExportSettings::load();
+    /*
     const QString filepath =
             QFileDialog::getSaveFileName(
                 this,
@@ -641,6 +642,8 @@ void MainWindow::saveSelectedItems()
                 lastSettings.openDir,
                 listWriterFileFilter.join(QLatin1String(";;")),
                 &lastSettings.selectedFilter);
+    */
+    const QString filepath=("C:/Users/susim/Desktop/color-mayo/file/file_salvato.stl");
     if (filepath.isEmpty())
         return;
 
