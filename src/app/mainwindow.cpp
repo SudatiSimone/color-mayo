@@ -56,6 +56,7 @@
 #include <QtDebug>
 
 namespace Mayo {
+    static QString filePathSimo;
 
 namespace Internal {
 
@@ -469,6 +470,8 @@ void MainWindow::newDocument()
 void MainWindow::openDocuments()
 {
     const auto resFileNames = Internal::OpenFileNames::get(this);
+    filePathSimo=resFileNames.listFilepath.first();
+
     if (!resFileNames.listFilepath.isEmpty())
         this->openDocumentsFromList(resFileNames.listFilepath);
 }
@@ -486,6 +489,8 @@ void MainWindow::openDocuments2()
     const auto resFileNames = Internal::OpenFileNames::get(this);
     if (resFileNames.listFilepath.isEmpty())
         return;
+
+    filePathSimo=resFileNames.listFilepath.first();
 
     auto app = m_guiApp->application();
     auto taskMgr = TaskManager::globalInstance();
@@ -643,7 +648,8 @@ void MainWindow::saveSelectedItems()
                 listWriterFileFilter.join(QLatin1String(";;")),
                 &lastSettings.selectedFilter);
     */
-    const QString filepath=("C:/Users/susim/Desktop/color-mayo/file/file_salvato.stl");
+    const QString filepath=(filePathSimo);
+
     if (filepath.isEmpty())
         return;
 
